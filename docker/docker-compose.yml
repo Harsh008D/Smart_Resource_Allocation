@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB:       volunteer_coordination
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../db/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ai-service:
+    build:
+      context: ../ai-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/volunteer_coordination
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../reports_dataset_large.csv:/data/reports_dataset_large.csv:ro
+      - ../volunteers_dataset_large.csv:/data/volunteers_dataset_large.csv:ro
+      - ../tasks_dataset_large.csv:/data/tasks_dataset_large.csv:ro
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL:   postgresql://postgres:postgres@postgres:5432/volunteer_coordination
+      AI_SERVICE_URL: http://ai-service:8000
+      PORT:           "4000"
+      NODE_ENV:       production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai-service:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      BACKEND_URL: http://backend:4000
+      AI_SERVICE_URL: http://ai-service:8000
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
