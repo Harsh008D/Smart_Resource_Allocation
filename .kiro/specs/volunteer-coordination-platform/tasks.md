@@ -26,13 +26,13 @@ This plan extends the existing platform with authentication, role-based access, 
   - Ask the user if questions arise before proceeding.
 
 - [x] 3. JWT Authentication & Role-Based Access
-  - [ ] 3.1 Install auth dependencies and create middleware
+  - [x] 3.1 Install auth dependencies and create middleware
     - Add `jsonwebtoken`, `bcrypt`, `@types/jsonwebtoken`, `@types/bcrypt` to `backend/package.json`
     - Create `backend/src/middleware/auth.ts` — `authenticate` middleware: extract Bearer token from `Authorization` header, verify with `JWT_SECRET`, attach `req.user = { userId, role, ngoId }` to request; return 401 if missing/invalid
     - Create `backend/src/middleware/requireRole.ts` — `requireRole(...roles)` middleware factory: return 403 if `req.user.role` not in allowed roles
     - _Requirements: Auth 1.1_
 
-  - [ ] 3.2 Implement auth endpoints
+  - [x] 3.2 Implement auth endpoints
     - Create `backend/src/routes/auth.ts`
     - `POST /api/auth/signup` — accept `{ email, password, role, ngo_id? }`; hash password with `bcrypt` (rounds=10); insert to `users`; return 201 `{ user_id }`
     - `POST /api/auth/login` — look up user by email; compare password hash; sign JWT with `{ userId, role, ngoId }`, expiry 24h; return 200 `{ token, role }`
