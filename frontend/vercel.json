@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://volunteer-backend.onrender.com/api/:path*"
+    },
+    {
+      "source": "/ai/:path*",
+      "destination": "https://volunteer-ai-service.onrender.com/ai/:path*"
+    }
+  ]
+}
