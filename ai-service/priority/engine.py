@@ -10,9 +10,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Optional
 
-import pandas as pd
-
 import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import config
 
@@ -20,7 +19,11 @@ import config
 _MAX_PEOPLE: float = 100.0   # fallback default
 
 try:
-    _df = pd.read_csv(config.REPORTS_CSV)
+    import pandas as pd
+    import sys, os
+    sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+    import config as _cfg
+    _df = pd.read_csv(_cfg.REPORTS_CSV)
     _MAX_PEOPLE = float(_df["people_affected"].quantile(0.95))
 except Exception:
     pass  # use default if CSV not available
