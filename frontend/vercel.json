@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://volunteer-backend.onrender.com/api/:path*"
+      "destination": "https://smart-resource-allocation-nmk2.onrender.com/api/:path*"
     },
     {
       "source": "/ai/:path*",
